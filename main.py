@@ -7,7 +7,7 @@ cursor = db.cursor()
 
 @app.route("/", methods=["GET"])
 def hello():
-	return "Hello Front-end"
+    return "Hello Front-end"
 
 @app.route("/page", methods=["GET"])
 def mainPage():
