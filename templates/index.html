@@ -18,52 +18,12 @@
   
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
-          // 링크 색 바꾸기
-          function LinkSetColor(color){
-            var alist = document.querySelectorAll('a');
-            for(var i = 0; i < alist.length; i++)
-                alist[i].style.color = color;
-        }
 
-        // 바디 글자색 바꾸기
-        function BodySetColor(color){
-            document.querySelector('body').style.color = color;
-        }
-
-        // 바디 배경색 바꾸기
-        function BodySetBackgroundColor(color){
-            document.querySelector('body').style.backgroundColor = color;
-        }
-
-        // 주간, 야간모드
-        function day_night_handler(self) {
-            var target = document.querySelector('body');
-            if (self.value == '라이트모드') {
-                BodySetBackgroundColor('RGB(0,0,0)');
-                BodySetColor('white');
-                LinkSetColor('powderblue')
-
-                self.value = '다크모드';
-            }
-            else {
-                BodySetBackgroundColor('white');
-                BodySetColor('black');
-                LinkSetColor('blue')
-
-                self.value = '라이트모드';
-            }
-        }
-</script>
 </head>
 <body style="margin-top:1%">
   <div id="const-div">
-  <h1>학생 점수 관리 시스템</h1>
-    
-  
-  <img src="{{url_for('static', filename='img.jpeg') }}" > <br>
-  <input type="button" value="라이트모드" onclick="day_night_handler(this)">
-  
+  <h1>학생 점수 관리 시스템</h1>  
+  <img src="{{url_for('static', filename='img.jpeg') }}" > 
   <br><br>
     학생이름: <input id="name" type="text" maxlength="10">
     국어: <input id="kuk" type="number" min="0" max="100">
