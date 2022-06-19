@@ -13,12 +13,12 @@ def hello():
 def mainPage():
     return render_template('index.html')
 
-#GET API(db 불러오기)
+#GET API
 @app.route("/backend", methods=["GET"])
 def get_info():
     cursor.execute("select * from student_score")
     students = cursor.fetchall()
-    print(students)
+    # print(students)
     info = []
     for s in students:
         info.append({
@@ -30,7 +30,7 @@ def get_info():
         })
     return jsonify(info)
 
-#GET API(db 불러오기)
+#GET API(kuk_sort)
 @app.route("/backend/kuk", methods=["GET"])
 def kuk_sort():
     cursor.execute("select * from student_score order by kuk desc")
@@ -47,12 +47,12 @@ def kuk_sort():
         })
     return jsonify(info)
 
-#GET API(db 불러오기)
+#GET API(eng_sort)
 @app.route("/backend/eng", methods=["GET"])
 def eng_sort():
     cursor.execute("select * from student_score order by eng desc")
     students = cursor.fetchall()
-    print(students)
+    # print(students)
     info = []
     for s in students:
         info.append({
@@ -64,12 +64,12 @@ def eng_sort():
         })
     return jsonify(info)
 
-#GET API(db 불러오기)
+#GET API(su_sort)
 @app.route("/backend/su", methods=["GET"])
 def su_sort():
     cursor.execute("select * from student_score order by su desc")
     students = cursor.fetchall()
-    print(students)
+    # print(students)
     info = []
     for s in students:
         info.append({
