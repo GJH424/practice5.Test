@@ -1,116 +1,275 @@
-from flask import Flask, render_template, jsonify, request
-import pymysql
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>학생점수관리시스템</title>
+  <style>
+    #const-div{
+      text-align:center;
+    }
+    img{
+      width: 800px;
+    }
+    ul{
+      width:400px;
+      margin-left:calc(50% - 200px);
+    }
 
-app = Flask(__name__)
-db = pymysql.connect(host='localhost', port=3306, user='root', passwd='', db='web_test', charset="utf8")
-cursor = db.cursor()
+  
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+          // 링크 색 바꾸기
+          function LinkSetColor(color){
+            var alist = document.querySelectorAll('a');
+            for(var i = 0; i < alist.length; i++)
+                alist[i].style.color = color;
+        }
 
-@app.route("/", methods=["GET"])
-def hello():
-	return "Hello Front-end"
+        // 바디 글자색 바꾸기
+        function BodySetColor(color){
+            document.querySelector('body').style.color = color;
+        }
 
-@app.route("/page", methods=["GET"])
-def mainPage():
-    return render_template('index.html')
+        // 바디 배경색 바꾸기
+        function BodySetBackgroundColor(color){
+            document.querySelector('body').style.backgroundColor = color;
+        }
 
-#GET API(db 불러오기)
-@app.route("/backend", methods=["GET"])
-def get_info():
-    cursor.execute("select * from student_score")
-    students = cursor.fetchall()
-    # print(students)
-    info = []
-    for s in students:
-        info.append({
-            'id':s[0],
-            'name':s[1],
-            'kuk':s[2],
-            'su':s[3],
-            'eng':s[4]
+        // 주간, 야간모드
+        function day_night_handler(self) {
+            var target = document.querySelector('body');
+            if (self.value == '라이트모드') {
+                BodySetBackgroundColor('RGB(0,0,0)');
+                BodySetColor('white');
+                LinkSetColor('powderblue')
+
+                self.value = '다크모드';
+            }
+            else {
+                BodySetBackgroundColor('white');
+                BodySetColor('black');
+                LinkSetColor('blue')
+
+                self.value = '라이트모드';
+            }
+        }
+</script>
+</head>
+<body style="margin-top:1%">
+  <div id="const-div">
+  <h1>학생 점수 관리 시스템</h1>
+    
+  
+  <img src="{{url_for('static', filename='img.jpeg') }}" > <br>
+  <input type="button" value="라이트모드" onclick="day_night_handler(this)">
+  
+  <br><br>
+    학생이름: <input id="name" type="text" maxlength="10">
+    국어: <input id="kuk" type="number" min="0" max="100">
+    영어: <input id="eng" type="number" min="0" max="100">
+    수학: <input id="su" type="number" min="0" max="100">
+  <br><br>
+    <button onclick="Save()" style="margin-left:15px; height:30px; font-size:medium">
+      저장
+    </button>
+    <button onclick="Del()" style="margin-left:15px; height:30px; font-size:medium">
+      삭제
+    </button>
+    <button onclick="Put()" style="margin-left:15px; height:30px; font-size:medium">
+      수정
+    </button>
+      
+
+    <br><br>국어: <input name="chk_info" type="radio" value="kuk_sort">
+            영어: <input name="chk_info" type="radio" value="eng_sort">
+            수학: <input name="chk_info" type="radio" value="su_sort">
+    <button onclick="Sort()" style="margin-left:15px; height:30px; font-size:medium">
+      정렬
+    </button>
+
+  </div>
+  <div>
+    <ul id="ajax-ul">
+
+    </ul>
+</div>
+<script>
+  $.ajax({
+    type : "GET",
+    url : "/backend",
+    data:{},
+    success: function(response){
+      console.log(response)
+      for (let data of response){
+        $("#ajax-ul").append(`<li>
+          <strong>${data.name}</strong> <br>
+          국어 : ${data.kuk},
+          영어 : ${data.eng},
+          수학 : ${data.su}
+              </li>`)}
+      }
+  })
+
+  function Sort(){
+    var checked = $('input[name=chk_info]:checked').val();
+
+    if (checked === "kuk_sort"){
+      $.ajax({
+        type:"GET",
+        url:"/backend/kuk",
+        data:{},
+        success: function(response){
+          $("#ajax-ul").empty()
+          for (let data of response){
+            $("#ajax-ul").append(`<li>
+              <strong>${data.name}</strong> <br>
+              국어 : ${data.kuk},
+              영어 : ${data.eng},
+              수학 : ${data.su}
+                  </li>`)
+            }
+          }
         })
-    return jsonify(info)
+      }
 
-#GET API(db 불러오기)
-@app.route("/backend/kuk", methods=["GET"])
-def kuk_sort():
-    cursor.execute("select * from student_score order by kuk desc")
-    students = cursor.fetchall()
-    # print(students)
-    info = []
-    for s in students:
-        info.append({
-            'id':s[0],
-            'name':s[1],
-            'kuk':s[2],
-            'su':s[3],
-            'eng':s[4]
+    if (checked === "eng_sort"){
+      $.ajax({
+        type:"GET",
+        url:"/backend/eng",
+        data:{},
+        success: function(response){
+          $("#ajax-ul").empty()
+          for (let data of response){
+            $("#ajax-ul").append(`<li>
+              <strong>${data.name}</strong> <br>
+              국어 : ${data.kuk},
+              영어 : ${data.eng},
+              수학 : ${data.su}
+                  </li>`)
+            }
+          }
         })
-    return jsonify(info)
+      }
 
-#GET API(db 불러오기)
-@app.route("/backend/eng", methods=["GET"])
-def eng_sort():
-    cursor.execute("select * from student_score order by eng desc")
-    students = cursor.fetchall()
-    # print(students)
-    info = []
-    for s in students:
-        info.append({
-            'id':s[0],
-            'name':s[1],
-            'kuk':s[2],
-            'su':s[3],
-            'eng':s[4]
+    if (checked === "su_sort"){
+      $.ajax({
+        type:"GET",
+        url:"/backend/su",
+        data:{},
+        success: function(response){
+          $("#ajax-ul").empty()
+          for (let data of response){
+            $("#ajax-ul").append(`<li>
+              <strong>${data.name}</strong> <br>
+              국어 : ${data.kuk},
+              영어 : ${data.eng},
+              수학 : ${data.su}
+                  </li>`)
+            }
+          }
         })
-    return jsonify(info)
+      }
+  }
 
-#GET API(db 불러오기)
-@app.route("/backend/su", methods=["GET"])
-def su_sort():
-    cursor.execute("select * from student_score order by su desc")
-    students = cursor.fetchall()
-    # print(students)
-    info = []
-    for s in students:
-        info.append({
-            'id':s[0],
-            'name':s[1],
-            'kuk':s[2],
-            'su':s[3],
-            'eng':s[4]
-        })
-    return jsonify(info)
+  function Save(){
+    const name = $("#name").val()
+    const kuk = $("#kuk").val()
+    const eng = $("#eng").val()
+    const su = $("#su").val()
+    $.ajax({
+      type: "POST",
+      url:"/backend",
+      data:{
+        name: name,
+        kuk: kuk,
+        su: su,
+        eng: eng
+      },
+      success: function(response){
+        $("#ajax-ul").empty()
+        $.ajax({
+            type : "GET",
+            url : "/backend",
+            data:{},
+            success: function(response){
+              console.log(response)
+              for (let data of response){
+                $("#ajax-ul").append(`<li>
+                  <strong>${data.name}</strong> <br>
+                  국어 : ${data.kuk},
+                  영어 : ${data.eng},
+                  수학 : ${data.su}
+                      </li>`)}
+      }
+  })
+      }
+    })
+  }
 
+  function Del(){
+    const name = $("#name").val()
+    $.ajax({
+      type:"DELETE",
+      url:`/backend?name=${name}`,
+      data:{},
+      success: function(response){
+        $("#ajax-ul").empty()
+        $.ajax({
+            type : "GET",
+            url : "/backend",
+            data:{},
+            success: function(response){
+              console.log(response)
+              for (let data of response){
+                $("#ajax-ul").append(`<li>
+                  <strong>${data.name}</strong> <br>
+                  국어 : ${data.kuk},
+                  영어 : ${data.eng},
+                  수학 : ${data.su}
+                      </li>`)}
+      }
+  })
+      }
+    })
+  }
 
-#POST API(학생 저장)
-@app.route("/backend", methods=["POST"])
-def save():
-    name = request.form['name']
-    kuk = request.form['kuk']
-    su = request.form['su']
-    eng = request.form['eng']
-    cursor.execute(f"insert into student_score (name, kuk, eng, su) values ('{name}', {kuk}, {eng}, {su})")
-    db.commit()
-    return "POST API"
+  function Put(){
+    const name = $("#name").val()
+    const kuk = $("#kuk").val()
+    const eng = $("#eng").val()
+    const su = $("#su").val()
+    $.ajax({
+      type:"PUT",
+      url:"/backend",
+      data:{
+        name:name,
+        kuk:kuk,
+        eng:eng,
+        su:su
+      },
+      success: function(response){
+        $("#ajax-ul").empty()
+        $.ajax({
+            type : "GET",
+            url : "/backend",
+            data:{},
+            success: function(response){
+              console.log(response)
+              for (let data of response){
+                $("#ajax-ul").append(`<li>
+                  <strong>${data.name}</strong> <br>
+                  국어 : ${data.kuk},
+                  영어 : ${data.eng},
+                  수학 : ${data.su}
+                      </li>`)}
+      }
+  })
+      }
 
-#DELETE API(학생 삭제)
-@app.route("/backend", methods=["DELETE"])
-def delete():
-    name = request.args.get('name')
-    cursor.execute(f"delete from student_score where name='{name}'")
-    db.commit()
-    return "DELETE API"
+    })
+  }
 
-#PUT API(학생 수정)
-@app.route("/backend", methods=["PUT"])
-def put():
-    name = request.form['name']
-    kuk = request.form['kuk']
-    su = request.form['su']
-    eng = request.form['eng']
-    cursor.execute(f"update student_score set kuk={kuk}, su={su}, eng={eng} where name='{name}'")
-    db.commit()
-    return "PUT API"
-
-if __name__ == "__main__":
-    app.run(debug=True)
+</script>
+</body>
+</html>
