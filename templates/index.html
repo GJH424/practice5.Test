@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>학생점수관리시스템</title>
+  <style>
+    #const-div{
+      text-align:center;
+    }
+    img{
+      width: 800px;
+    }
+    ul{
+      width:400px;
+      margin-left:calc(50% - 200px);
+    }
+
+  
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</head>
+<body style="margin-top:1%">
+  <div id="const-div">
+  <h1>학생 점수 관리 시스템</h1>
+  
+  <img src="{{url_for('static', filename='img.jpeg') }}" >
+  
+  <br><br>
+    학생이름: <input id="name" type="text" maxlength="10">
+    국어: <input id="kuk" type="number" min="0" max="100">
+    영어: <input id="eng" type="number" min="0" max="100">
+    수학: <input id="su" type="number" min="0" max="100">
+  <br><br>
+    <button onclick="Save()" style="margin-left:15px; height:30px; font-size:medium">
+      저장
+    </button>
+    <button onclick="Del()" style="margin-left:15px; height:30px; font-size:medium">
+      삭제
+    </button>
+    <button onclick="Put()" style="margin-left:15px; height:30px; font-size:medium">
+      수정
+    </button>
+      
+
+    <br><br>국어: <input name="chk_info" type="radio" value="kuk_sort">
+            영어: <input name="chk_info" type="radio" value="su_sort">
+            수학: <input name="chk_info" type="radio" value="eng_sort">
+    <button onclick="Sort()" style="margin-left:15px; height:30px; font-size:medium">
+      정렬
+    </button>
+
+  </div>
+  <div>
+    <ul id="ajax-ul">
+
+    </ul>
+</div>
+<script>
+  $.ajax({
+    type : "GET",
+    url : "/backend",
+    data:{},
+    success: function(response){
+      console.log(response)
+      for (let data of response){
+        $("#ajax-ul").append(`<li>
+          <strong>${data.name}</strong> <br>
+          국어 : ${data.kuk},
+          영어 : ${data.eng},
+          수학 : ${data.su}
+              </li>`)}
+      }
+  })
+
+  function Sort(){
+    var checked = $('input[name=chk_info]:checked').val();
+
+    if (checked === "kuk_sort"){
+      $.ajax({
+        type:"GET",
+        url:"/backend/kuk",
+        data:{},
+        success: function(response){
+          $("#ajax-ul").empty()
+          for (let data of response){
+            $("#ajax-ul").append(`<li>
+              <strong>${data.name}</strong> <br>
+              국어 : ${data.kuk},
+              영어 : ${data.eng},
+              수학 : ${data.su}
+                  </li>`)
+            }
+          }
+        })
+      }
+
+    if (checked === "eng_sort"){
+      $.ajax({
+        type:"GET",
+        url:"/backend/eng",
+        data:{},
+        success: function(response){
+          $("#ajax-ul").empty()
+          for (let data of response){
+            $("#ajax-ul").append(`<li>
+              <strong>${data.name}</strong> <br>
+              국어 : ${data.kuk},
+              영어 : ${data.eng},
+              수학 : ${data.su}
+                  </li>`)
+            }
+          }
+        })
+      }
+
+    if (checked === "su_sort"){
+      $.ajax({
+        type:"GET",
+        url:"/backend/su",
+        data:{},
+        success: function(response){
+          $("#ajax-ul").empty()
+          for (let data of response){
+            $("#ajax-ul").append(`<li>
+              <strong>${data.name}</strong> <br>
+              국어 : ${data.kuk},
+              영어 : ${data.eng},
+              수학 : ${data.su}
+                  </li>`)
+            }
+          }
+        })
+      }
+  }
+
+  function Save(){
+    const name = $("#name").val()
+    const kuk = $("#kuk").val()
+    const eng = $("#eng").val()
+    const su = $("#su").val()
+    $.ajax({
+      type: "POST",
+      url:"/backend",
+      data:{
+        name: name,
+        kuk: kuk,
+        su: su,
+        eng: eng
+      },
+      success: function(response){
+        location.reload()
+      }
+    })
+  }
+
+  function Del(){
+    const name = $("#name").val()
+    $.ajax({
+      type:"DELETE",
+      url:`/backend?name=${name}`,
+      data:{},
+      success: function(response){
+        location.reload()
+      }
+    })
+  }
+
+  function Put(){
+    const name = $("#name").val()
+    const kuk = $("#kuk").val()
+    const eng = $("#eng").val()
+    const su = $("#su").val()
+    $.ajax({
+      type:"PUT",
+      url:"/backend",
+      data:{
+        name:name,
+        kuk:kuk,
+        su:su,
+        eng:eng
+      },
+      success: function(response){
+        location.reload()
+      }
+
+    })
+  }
+
+</script>
+</body>
+</html>
