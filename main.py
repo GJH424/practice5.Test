@@ -25,8 +25,8 @@ def get_info():
             'id':s[0],
             'name':s[1],
             'kuk':s[2],
-            'eng':s[3],
-            'su':s[4]
+            'su':s[3],
+            'eng':s[4]
         })
     return jsonify(info)
 
@@ -42,8 +42,8 @@ def kuk_sort():
             'id':s[0],
             'name':s[1],
             'kuk':s[2],
-            'eng':s[3],
-            'su':s[4]
+            'su':s[3],
+            'eng':s[4]
         })
     return jsonify(info)
 
@@ -52,15 +52,15 @@ def kuk_sort():
 def eng_sort():
     cursor.execute("select * from student_score order by eng desc")
     students = cursor.fetchall()
-    # print(students)
+    print(students)
     info = []
     for s in students:
         info.append({
             'id':s[0],
             'name':s[1],
             'kuk':s[2],
-            'eng':s[3],
-            'su':s[4]
+            'su':s[3],
+            'eng':s[4]
         })
     return jsonify(info)
 
@@ -76,8 +76,8 @@ def su_sort():
             'id':s[0],
             'name':s[1],
             'kuk':s[2],
-            'eng':s[3],
-            'su':s[4]
+            'su':s[3],
+            'eng':s[4]
         })
     return jsonify(info)
 
